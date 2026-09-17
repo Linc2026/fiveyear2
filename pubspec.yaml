@@ -1,0 +1,47 @@
+name: five_year_diary
+description: Five Year Diary - local journal app
+publish_to: 'none'
+version: 1.0.0+2
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  get: ^4.7.2
+  flutter_screenutil: ^5.9.3
+  sqflite: ^2.4.2
+  path: ^1.9.1
+  package_info_plus: ^8.0.0
+  flutter_inappwebview: ^6.1.5
+  path_provider: ^2.1.5
+  shared_preferences: ^2.5.3
+  device_info_plus: ^10.1.0
+  flutter_timezone: ^4.1.0
+  intl: ^0.20.2
+  image_picker: ^1.1.2
+  dio: ^5.4.3+1
+  share_plus: ^10.1.4
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+  # flutter pub run flutter_launcher_icons:main
+flutter_launcher_icons:
+  image_path: "assets/years.png"
+  android: true
+  ios: true
+  web:
+    generate: true
+    image_path: "assets/years.png"
+    background_color: "#FFFFFF"
+    theme_color: "#FFFFFF"
+
+flutter:
+  uses-material-design: true
