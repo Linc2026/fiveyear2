@@ -10,12 +10,6 @@ import 'profile_logic.dart';
 class ProfileView extends GetView<ProfileLogic> {
   const ProfileView({super.key});
 
-  static const _tabColors = [
-    AppColors.accentBlue,
-    AppColors.accentPink,
-    AppColors.accentYellow,
-  ];
-
   static const _kpiIcons = [
     Icons.menu_book_rounded,
     Icons.text_fields_rounded,
@@ -42,15 +36,16 @@ class ProfileView extends GetView<ProfileLogic> {
 
           return RefreshIndicator(
             onRefresh: controller.loadData,
-            color: AppColors.primary,
+            color: AppPalette.primary(context),
             child: ListView(
               padding: EdgeInsets.only(bottom: 28.h),
               children: [
-                _buildTopBar(),
-                _buildUserHero(name),
-                _buildDataOverview(),
-                _buildQuickActions(),
+                _buildTopBar(context),
+                _buildUserHero(context, name),
+                _buildDataOverview(context),
+                _buildQuickActions(context),
                 _buildMenuNotebook(
+                  context,
                   Lang.profileGroupData,
                   [
                     _MenuData(
@@ -68,6 +63,7 @@ class ProfileView extends GetView<ProfileLogic> {
                   ],
                 ),
                 _buildMenuNotebook(
+                  context,
                   Lang.profileGroupMore,
                   [
                     _MenuData(
@@ -90,7 +86,7 @@ class ProfileView extends GetView<ProfileLogic> {
                     ),
                   ],
                 ),
-                _buildFooter(),
+                _buildFooter(context),
               ],
             ),
           );
@@ -99,21 +95,28 @@ class ProfileView extends GetView<ProfileLogic> {
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(Lang.profileTitle, style: AppTextStyles.pageTitle()),
+          Text(
+            Lang.profileTitle,
+            style: AppTextStyles.pageTitle(context: context),
+          ),
           SizedBox(height: 2.h),
-          Text(Lang.profileSubtitle, style: AppTextStyles.caption()),
+          Text(
+            Lang.profileSubtitle,
+            style: AppTextStyles.caption(context: context),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildUserHero(String name) {
+  Widget _buildUserHero(BuildContext context, String name) {
+    final tabColors = AppPalette.profileSideTabs(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 0),
       child: Stack(
@@ -129,7 +132,7 @@ class ProfileView extends GetView<ProfileLogic> {
                   height: 28.h,
                   margin: EdgeInsets.only(bottom: 8.h),
                   decoration: BoxDecoration(
-                    color: _tabColors[i],
+                    color: tabColors[i],
                     borderRadius: BorderRadius.horizontal(
                       right: Radius.circular(4.r),
                     ),
@@ -246,7 +249,7 @@ class ProfileView extends GetView<ProfileLogic> {
     );
   }
 
-  Widget _buildDataOverview() {
+  Widget _buildDataOverview(BuildContext context) {
     final items = [
       (Lang.profileTotalEntries, '${controller.totalEntries.value}'),
       (Lang.profileTotalWords, '${controller.totalWords.value}'),
@@ -265,14 +268,14 @@ class ProfileView extends GetView<ProfileLogic> {
                 width: 4.w,
                 height: 18.h,
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: AppPalette.primary(context),
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
               SizedBox(width: 8.w),
               Text(
                 Lang.profileDataOverview,
-                style: AppTextStyles.pageTitle(size: 18.sp),
+                style: AppTextStyles.pageTitle(size: 18.sp, context: context),
               ),
             ],
           ),
@@ -281,7 +284,7 @@ class ProfileView extends GetView<ProfileLogic> {
             padding: EdgeInsets.only(left: 12.w),
             child: Text(
               Lang.profileTapStats,
-              style: AppTextStyles.caption(size: 11.sp),
+              style: AppTextStyles.caption(size: 11.sp, context: context),
             ),
           ),
           SizedBox(height: 12.h),
@@ -309,7 +312,7 @@ class ProfileView extends GetView<ProfileLogic> {
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(BuildContext context) {
     final actions = [
       (Icons.edit_rounded, Lang.profileQuickWrite, controller.quickWrite),
       (Icons.mail_outline_rounded, Lang.profileQuickFuture, controller.goFuture),
@@ -324,7 +327,7 @@ class ProfileView extends GetView<ProfileLogic> {
         children: [
           Text(
             Lang.profileQuickActions,
-            style: AppTextStyles.pageTitle(size: 18.sp),
+            style: AppTextStyles.pageTitle(size: 18.sp, context: context),
           ),
           SizedBox(height: 12.h),
           Row(
@@ -334,7 +337,9 @@ class ProfileView extends GetView<ProfileLogic> {
                 child: Padding(
                   padding: EdgeInsets.only(right: i < 3 ? 8.w : 0),
                   child: Material(
-                    color: _quickColors[i].withValues(alpha: 0.1),
+                    color: _quickColors[i].withValues(
+                      alpha: AppPalette.isDark(context) ? 0.18 : 0.1,
+                    ),
                     borderRadius: BorderRadius.circular(16.r),
                     child: InkWell(
                       onTap: a.$3,
@@ -355,7 +360,10 @@ class ProfileView extends GetView<ProfileLogic> {
                             SizedBox(height: 8.h),
                             Text(
                               a.$2,
-                              style: AppTextStyles.caption(size: 10.sp),
+                              style: AppTextStyles.caption(
+                                size: 10.sp,
+                                context: context,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
@@ -374,7 +382,11 @@ class ProfileView extends GetView<ProfileLogic> {
     );
   }
 
-  Widget _buildMenuNotebook(String title, List<_MenuData> items) {
+  Widget _buildMenuNotebook(
+      BuildContext context,
+      String title,
+      List<_MenuData> items,
+      ) {
     return Padding(
       padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 0),
       child: Column(
@@ -384,7 +396,7 @@ class ProfileView extends GetView<ProfileLogic> {
             padding: EdgeInsets.only(left: 4.w, bottom: 10.h),
             child: Text(
               title,
-              style: AppTextStyles.caption().copyWith(
+              style: AppTextStyles.caption(context: context).copyWith(
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
               ),
@@ -392,12 +404,12 @@ class ProfileView extends GetView<ProfileLogic> {
           ),
           Container(
             decoration: BoxDecoration(
-              color: AppColors.cardBg,
+              color: AppPalette.surfaceElevated(context),
               borderRadius: BorderRadius.circular(18.r),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: AppPalette.border(context)),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.05),
+                  color: AppPalette.cardShadow(context),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -439,12 +451,15 @@ class ProfileView extends GetView<ProfileLogic> {
                                 Expanded(
                                   child: Text(
                                     item.title,
-                                    style: AppTextStyles.body(size: 15.sp),
+                                    style: AppTextStyles.body(
+                                      size: 15.sp,
+                                      context: context,
+                                    ),
                                   ),
                                 ),
                                 Icon(
                                   Icons.chevron_right_rounded,
-                                  color: AppColors.textSecondary,
+                                  color: AppPalette.textSecondary(context),
                                   size: 22.sp,
                                 ),
                               ],
@@ -456,7 +471,7 @@ class ProfileView extends GetView<ProfileLogic> {
                         Divider(
                           height: 1,
                           indent: 70.w,
-                          color: AppColors.border,
+                          color: AppPalette.border(context),
                         ),
                     ],
                   );
@@ -469,13 +484,13 @@ class ProfileView extends GetView<ProfileLogic> {
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 0),
       child: Center(
         child: Text(
           Lang.appName,
-          style: AppTextStyles.caption(size: 11.sp),
+          style: AppTextStyles.caption(size: 11.sp, context: context),
         ),
       ),
     );
@@ -498,7 +513,7 @@ class _KpiTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.cardBg,
+      color: AppPalette.surfaceElevated(context),
       borderRadius: BorderRadius.circular(16.r),
       child: InkWell(
         onTap: onTap,
@@ -506,10 +521,10 @@ class _KpiTile extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: AppPalette.border(context)),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.04),
+                color: AppPalette.cardShadow(context),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -523,10 +538,14 @@ class _KpiTile extends StatelessWidget {
                   width: 36.w,
                   height: 36.w,
                   decoration: BoxDecoration(
-                    color: AppColors.peach,
+                    color: AppPalette.peach(context),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
-                  child: Icon(icon, size: 20.sp, color: AppColors.primary),
+                  child: Icon(
+                    icon,
+                    size: 20.sp,
+                    color: AppPalette.primary(context),
+                  ),
                 ),
                 SizedBox(width: 10.w),
                 Expanded(
@@ -536,7 +555,10 @@ class _KpiTile extends StatelessWidget {
                     children: [
                       Text(
                         label,
-                        style: AppTextStyles.caption(size: 11.sp),
+                        style: AppTextStyles.caption(
+                          size: 11.sp,
+                          context: context,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -544,7 +566,8 @@ class _KpiTile extends StatelessWidget {
                         value,
                         style: AppTextStyles.pageTitle(
                           size: 20.sp,
-                          color: AppColors.primary,
+                          context: context,
+                          color: AppPalette.primary(context),
                         ),
                       ),
                     ],

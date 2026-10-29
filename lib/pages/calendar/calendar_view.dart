@@ -20,11 +20,11 @@ class CalendarView extends GetView<CalendarLogic> {
           controller.loading.value;
           return Column(
             children: [
-              _buildTopBar(),
-              _buildMonthHero(),
-              _buildSummaryStrip(),
-              Expanded(child: _buildNotebookCalendar()),
-              _buildLegend(),
+              _buildTopBar(context),
+              _buildMonthHero(context),
+              _buildSummaryStrip(context),
+              Expanded(child: _buildNotebookCalendar(context)),
+              _buildLegend(context),
             ],
           );
         }),
@@ -32,36 +32,45 @@ class CalendarView extends GetView<CalendarLogic> {
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(Lang.calendarTitle, style: AppTextStyles.pageTitle()),
+          Text(
+            Lang.calendarTitle,
+            style: AppTextStyles.pageTitle(context: context),
+          ),
           SizedBox(height: 2.h),
-          Text(Lang.calendarSubtitle, style: AppTextStyles.caption()),
+          Text(
+            Lang.calendarSubtitle,
+            style: AppTextStyles.caption(context: context),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildMonthHero() {
+  Widget _buildMonthHero(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 0),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.peach, AppColors.cardBg],
+            colors: [
+              AppPalette.peach(context),
+              AppPalette.surfaceElevated(context),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: AppPalette.border(context)),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.08),
+              color: AppPalette.cardShadow(context),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -69,13 +78,16 @@ class CalendarView extends GetView<CalendarLogic> {
         ),
         child: Row(
           children: [
-            _NavButton(icon: Icons.chevron_left_rounded, onTap: controller.prevMonth),
+            _NavButton(
+              icon: Icons.chevron_left_rounded,
+              onTap: controller.prevMonth,
+            ),
             Expanded(
               child: Column(
                 children: [
                   Text(
                     controller.monthDisplay,
-                    style: AppTextStyles.displayTitle(size: 32.sp),
+                    style: AppTextStyles.displayTitle(size: 32.sp, context: context),
                     textAlign: TextAlign.center,
                   ),
                   if (!controller.isCurrentMonth) ...[
@@ -91,14 +103,17 @@ class CalendarView extends GetView<CalendarLogic> {
                 ],
               ),
             ),
-            _NavButton(icon: Icons.chevron_right_rounded, onTap: controller.nextMonth),
+            _NavButton(
+              icon: Icons.chevron_right_rounded,
+              onTap: controller.nextMonth,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSummaryStrip() {
+  Widget _buildSummaryStrip(BuildContext context) {
     final now = DateTime.now();
     final todayMarked = controller.isCurrentMonth &&
         controller.markedDays.contains(now.day);
@@ -110,18 +125,25 @@ class CalendarView extends GetView<CalendarLogic> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: AppPalette.primaryTint(context),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: AppPalette.border(context)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.edit_note_rounded, size: 16.sp, color: AppColors.primary),
+                Icon(
+                  Icons.edit_note_rounded,
+                  size: 16.sp,
+                  color: AppPalette.primary(context),
+                ),
                 SizedBox(width: 6.w),
                 Text(
                   '${Lang.calendarMonthRecorded} ${controller.markedCount} ${Lang.calendarDays}',
-                  style: AppTextStyles.caption(color: AppColors.primary),
+                  style: AppTextStyles.caption(
+                    context: context,
+                    color: AppPalette.primary(context),
+                  ),
                 ),
               ],
             ),
@@ -131,7 +153,7 @@ class CalendarView extends GetView<CalendarLogic> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
               decoration: BoxDecoration(
-                color: AppColors.cta.withValues(alpha: 0.12),
+                color: AppPalette.accentSurface(context),
                 borderRadius: BorderRadius.circular(10.r),
               ),
               child: Row(
@@ -152,17 +174,17 @@ class CalendarView extends GetView<CalendarLogic> {
     );
   }
 
-  Widget _buildNotebookCalendar() {
+  Widget _buildNotebookCalendar(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.cardBg,
+          color: AppPalette.surfaceElevated(context),
           borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: AppPalette.border(context)),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.06),
+              color: AppPalette.cardShadow(context),
               blurRadius: 20,
               offset: const Offset(0, 6),
             ),
@@ -173,23 +195,23 @@ class CalendarView extends GetView<CalendarLogic> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildBindingStrip(),
+              _buildBindingStrip(context),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: controller.loadData,
-                  color: AppColors.primary,
+                  color: AppPalette.primary(context),
                   edgeOffset: 8,
                   child: ListView(
                     padding: EdgeInsets.fromLTRB(10.w, 14.h, 14.w, 14.h),
                     children: [
-                      _buildWeekHeader(),
+                      _buildWeekHeader(context),
                       SizedBox(height: 8.h),
-                      _buildGrid(),
+                      _buildGrid(context),
                       SizedBox(height: 12.h),
                       Center(
                         child: Text(
                           Lang.calendarTapHint,
-                          style: AppTextStyles.caption(size: 11.sp),
+                          style: AppTextStyles.caption(size: 11.sp, context: context),
                         ),
                       ),
                     ],
@@ -203,21 +225,21 @@ class CalendarView extends GetView<CalendarLogic> {
     );
   }
 
-  Widget _buildBindingStrip() {
+  Widget _buildBindingStrip(BuildContext context) {
     return Container(
       width: 24.w,
-      color: AppColors.rowAlt,
+      color: AppPalette.rowAlt(context),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(
           6,
-          (_) => Container(
+              (_) => Container(
             width: 8.w,
             height: 8.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.background,
-              border: Border.all(color: AppColors.border, width: 1.5),
+              color: AppPalette.bindingHole(context),
+              border: Border.all(color: AppPalette.border(context), width: 1.5),
             ),
           ),
         ),
@@ -225,7 +247,7 @@ class CalendarView extends GetView<CalendarLogic> {
     );
   }
 
-  Widget _buildWeekHeader() {
+  Widget _buildWeekHeader(BuildContext context) {
     return Row(
       children: List.generate(7, (i) {
         final isWeekend = i >= 5;
@@ -235,7 +257,10 @@ class CalendarView extends GetView<CalendarLogic> {
               _weekdays[i],
               style: AppTextStyles.caption(
                 size: 12.sp,
-                color: isWeekend ? AppColors.secondary : AppColors.textSecondary,
+                context: context,
+                color: isWeekend
+                    ? AppColors.secondary
+                    : AppPalette.textSecondary(context),
               ).copyWith(fontWeight: FontWeight.w700),
             ),
           ),
@@ -244,7 +269,7 @@ class CalendarView extends GetView<CalendarLogic> {
     );
   }
 
-  Widget _buildGrid() {
+  Widget _buildGrid(BuildContext context) {
     final total = controller.daysInMonth;
     final offset = controller.firstWeekday - 1;
     final cells = offset + total;
@@ -285,14 +310,14 @@ class CalendarView extends GetView<CalendarLogic> {
     );
   }
 
-  Widget _buildLegend() {
+  Widget _buildLegend(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 12.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _LegendItem(
-            color: AppColors.primary,
+            color: AppPalette.primary(context),
             hollow: false,
             label: Lang.calendarLegendRecorded,
           ),
@@ -317,14 +342,14 @@ class _NavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.cardBg,
-      shape: CircleBorder(side: BorderSide(color: AppColors.border)),
+      color: AppPalette.surface(context),
+      shape: CircleBorder(side: BorderSide(color: AppPalette.border(context))),
       child: InkWell(
         onTap: onTap,
         customBorder: const CircleBorder(),
         child: Padding(
           padding: EdgeInsets.all(6.w),
-          child: Icon(icon, size: 26.sp, color: AppColors.primary),
+          child: Icon(icon, size: 26.sp, color: AppPalette.primary(context)),
         ),
       ),
     );
@@ -350,15 +375,17 @@ class _DayCell extends StatelessWidget {
   Widget build(BuildContext context) {
     Color bg = Colors.transparent;
     Border? border;
-    Color textColor = AppColors.textPrimary;
+    Color textColor = AppPalette.textPrimary(context);
 
     if (isToday) {
-      bg = AppColors.cta.withValues(alpha: 0.12);
+      bg = AppPalette.accentSoft(context);
       border = Border.all(color: AppColors.cta, width: 1.5);
       textColor = AppColors.cta;
     } else if (marked) {
-      bg = AppColors.peach.withValues(alpha: 0.5);
-      border = Border.all(color: AppColors.primary.withValues(alpha: 0.25));
+      bg = AppPalette.calendarDayMarked(context);
+      border = Border.all(
+        color: AppPalette.primary(context).withValues(alpha: 0.35),
+      );
     } else if (isWeekend) {
       textColor = AppColors.secondary;
     }
@@ -394,7 +421,7 @@ class _DayCell extends StatelessWidget {
                   width: 6.w,
                   height: 6.w,
                   decoration: BoxDecoration(
-                    color: isToday ? AppColors.cta : AppColors.primary,
+                    color: isToday ? AppColors.cta : AppPalette.primary(context),
                     shape: BoxShape.circle,
                   ),
                 )
@@ -435,15 +462,18 @@ class _LegendItem extends StatelessWidget {
           child: hollow
               ? null
               : Center(
-                  child: Container(
-                    width: 5.w,
-                    height: 5.w,
-                    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-                  ),
-                ),
+            child: Container(
+              width: 5.w,
+              height: 5.w,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            ),
+          ),
         ),
         SizedBox(width: 6.w),
-        Text(label, style: AppTextStyles.caption(size: 11.sp)),
+        Text(
+          label,
+          style: AppTextStyles.caption(size: 11.sp, context: context),
+        ),
       ],
     );
   }

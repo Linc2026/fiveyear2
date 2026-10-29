@@ -23,14 +23,18 @@ class SettingsLogic extends GetxController {
     darkMode.value = await db.isDarkMode();
   }
 
+  Future<void> setDarkMode(bool value) async {
+    darkMode.value = value;
+    if (Get.isRegistered<ThemeController>()) {
+      await Get.find<ThemeController>().toggleDark(value);
+    }
+  }
+
   Future<void> save() async {
     saving.value = true;
     final db = DbFiveYearDiaryHelper.instance;
     await db.setNickname(nicknameController.text.trim());
     await db.setStartYear(startYear.value);
-    if (Get.isRegistered<ThemeController>()) {
-      await Get.find<ThemeController>().toggleDark(darkMode.value);
-    }
     saving.value = false;
     Get.back();
     Get.snackbar('', Lang.settingsSaved, snackPosition: SnackPosition.BOTTOM);

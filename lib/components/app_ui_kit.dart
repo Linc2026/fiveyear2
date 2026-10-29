@@ -10,11 +10,13 @@ import '../utils/app_theme.dart';
 class AppUi {
   AppUi._();
 
-  static BoxDecoration cardDecoration({Color? color}) {
+  static BoxDecoration cardDecoration({Color? color, BuildContext? context}) {
+    final surface = context != null ? AppPalette.surface(context) : AppColors.cardBg;
+    final border = context != null ? AppPalette.border(context) : AppColors.border;
     return BoxDecoration(
-      color: color ?? AppColors.cardBg,
+      color: color ?? surface,
       borderRadius: BorderRadius.circular(18.r),
-      border: Border.all(color: AppColors.border),
+      border: Border.all(color: border),
       boxShadow: [
         BoxShadow(
           color: AppColors.primary.withValues(alpha: 0.05),
@@ -25,21 +27,29 @@ class AppUi {
     );
   }
 
-  static InputDecoration inputDecoration({String? label, String? hint}) {
+  static InputDecoration inputDecoration({
+    String? label,
+    String? hint,
+    BuildContext? context,
+  }) {
+    final secondary =
+    context != null ? AppPalette.textSecondary(context) : AppColors.textSecondary;
+    final rowAlt = context != null ? AppPalette.rowAlt(context) : AppColors.rowAlt;
+    final border = context != null ? AppPalette.border(context) : AppColors.border;
     return InputDecoration(
       labelText: label,
-      labelStyle: AppTextStyles.caption(),
+      labelStyle: AppTextStyles.caption(color: secondary),
       hintText: hint,
-      hintStyle: AppTextStyles.caption(color: AppColors.textSecondary),
+      hintStyle: AppTextStyles.caption(color: secondary),
       filled: true,
-      fillColor: AppColors.rowAlt,
+      fillColor: rowAlt,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14.r),
-        borderSide: const BorderSide(color: AppColors.border),
+        borderSide: BorderSide(color: border),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14.r),
-        borderSide: const BorderSide(color: AppColors.border),
+        borderSide: BorderSide(color: border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14.r),
@@ -92,29 +102,29 @@ class AppUi {
           alignment: Alignment.center,
           child: loading
               ? SizedBox(
-                  width: 22.w,
-                  height: 22.w,
-                  child: const CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
+            width: 22.w,
+            height: 22.w,
+            child: const CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
+            ),
+          )
               : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (icon != null) ...[
-                      Icon(icon, size: 20.sp, color: Colors.white),
-                      SizedBox(width: 8.w),
-                    ],
-                    Text(
-                      label,
-                      style: AppTextStyles.body(
-                        color: Colors.white,
-                        weight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 20.sp, color: Colors.white),
+                SizedBox(width: 8.w),
+              ],
+              Text(
+                label,
+                style: AppTextStyles.body(
+                  color: Colors.white,
+                  weight: FontWeight.w700,
                 ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -358,7 +368,7 @@ class AppSheetContainer extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: 40.h),
       decoration: BoxDecoration(
-        color: AppColors.cardBg,
+        color: AppPalette.surfaceElevated(context),
         borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
         boxShadow: [
           BoxShadow(
@@ -547,7 +557,7 @@ class AppFormCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: padding ?? EdgeInsets.all(16.w),
-      decoration: AppUi.cardDecoration(),
+      decoration: AppUi.cardDecoration(context: context),
       child: child,
     );
   }

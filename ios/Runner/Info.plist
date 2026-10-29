@@ -27,7 +27,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Please authorize a camera to take photos of the diary.</string>
+	<string>Please authorize camera to take photos of the diary.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Please authorize the photo album to select and upload diary photos.</string>
 	<key>UIApplicationSceneManifest</key>

@@ -17,7 +17,7 @@ class MainShellView extends GetView<MainShellLogic> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () {
+          () {
         final index = controller.currentIndex.value;
         return Scaffold(
           body: IndexedStack(
@@ -32,8 +32,8 @@ class MainShellView extends GetView<MainShellLogic> {
           ),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
-              color: AppColors.cardBg.withValues(alpha: 0.96),
-              border: Border(top: BorderSide(color: AppColors.border)),
+              color: AppPalette.surface(context).withValues(alpha: 0.96),
+              border: Border(top: BorderSide(color: AppPalette.border(context))),
               boxShadow: [
                 BoxShadow(
                   color: AppColors.primary.withValues(alpha: 0.06),
@@ -116,13 +116,17 @@ class _SideNavItem extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 padding: EdgeInsets.all(selected ? 6.w : 4.w),
                 decoration: BoxDecoration(
-                  color: selected ? AppColors.peach : Colors.transparent,
+                  color: selected
+                      ? AppPalette.navSelectedBg(context)
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(14.r),
                 ),
                 child: Icon(
                   icon,
                   size: 20.sp,
-                  color: selected ? AppColors.primary : AppColors.textSecondary,
+                  color: selected
+                      ? AppPalette.primary(context)
+                      : AppPalette.textSecondary(context),
                 ),
               ),
               SizedBox(height: 2.h),
@@ -130,7 +134,10 @@ class _SideNavItem extends StatelessWidget {
                 label,
                 style: AppTextStyles.caption(
                   size: 9.sp,
-                  color: selected ? AppColors.primary : AppColors.textSecondary,
+                  context: context,
+                  color: selected
+                      ? AppPalette.primary(context)
+                      : AppPalette.textSecondary(context),
                 ).copyWith(fontWeight: selected ? FontWeight.w700 : FontWeight.w500),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -177,7 +184,7 @@ class _CenterTrailNav extends StatelessWidget {
                         : [AppColors.primary, AppColors.primaryDark],
                   ),
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.cardBg, width: 3.w),
+                  border: Border.all(color: AppPalette.surface(context), width: 3.w),
                   boxShadow: [
                     BoxShadow(
                       color: (selected ? AppColors.cta : AppColors.primary)
@@ -198,7 +205,10 @@ class _CenterTrailNav extends StatelessWidget {
               Lang.tabTrail,
               style: AppTextStyles.caption(
                 size: 9.sp,
-                color: selected ? AppColors.cta : AppColors.textSecondary,
+                context: context,
+                color: selected
+                    ? AppColors.cta
+                    : AppPalette.textSecondary(context),
               ).copyWith(fontWeight: selected ? FontWeight.w700 : FontWeight.w600),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

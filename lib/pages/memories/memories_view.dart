@@ -31,8 +31,8 @@ class MemoriesView extends GetView<MemoriesLogic> {
           if (!controller.hasData) {
             return Column(
               children: [
-                _buildTopBar(),
-                Expanded(child: _buildEmptyState()),
+                _buildTopBar(context),
+                Expanded(child: _buildEmptyState(context)),
               ],
             );
           }
@@ -42,22 +42,25 @@ class MemoriesView extends GetView<MemoriesLogic> {
 
           return RefreshIndicator(
             onRefresh: controller.loadData,
-            color: AppColors.primary,
+            color: AppPalette.primary(context),
             child: ListView(
               padding: EdgeInsets.only(bottom: 24.h),
               children: [
-                _buildTopBar(),
-                _buildSummaryStrip(),
-                if (entry != null) _buildRandomHero(entry),
+                _buildTopBar(context),
+                _buildSummaryStrip(context),
+                if (entry != null) _buildRandomHero(context, entry),
                 if (photos.isNotEmpty) ...[
-                  _buildPhotoWallHeader(),
-                  _buildPhotoWall(photos),
+                  _buildPhotoWallHeader(context),
+                  _buildPhotoWall(context, photos),
                   Padding(
                     padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 0),
                     child: Center(
                       child: Text(
                         Lang.memoriesWallHint,
-                        style: AppTextStyles.caption(size: 11.sp),
+                        style: AppTextStyles.caption(
+                          size: 11.sp,
+                          context: context,
+                        ),
                       ),
                     ),
                   ),
@@ -70,21 +73,27 @@ class MemoriesView extends GetView<MemoriesLogic> {
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(Lang.memoriesTitle, style: AppTextStyles.pageTitle()),
+          Text(
+            Lang.memoriesTitle,
+            style: AppTextStyles.pageTitle(context: context),
+          ),
           SizedBox(height: 2.h),
-          Text(Lang.memoriesSubtitle, style: AppTextStyles.caption()),
+          Text(
+            Lang.memoriesSubtitle,
+            style: AppTextStyles.caption(context: context),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryStrip() {
+  Widget _buildSummaryStrip(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 0),
       child: Row(
@@ -92,7 +101,7 @@ class MemoriesView extends GetView<MemoriesLogic> {
           _SummaryChip(
             icon: Icons.photo_library_rounded,
             label: '${controller.photoCount} ${Lang.memoriesPhotoCount}',
-            color: AppColors.primary,
+            color: AppPalette.primary(context),
           ),
           SizedBox(width: 10.w),
           _SummaryChip(
@@ -105,7 +114,7 @@ class MemoriesView extends GetView<MemoriesLogic> {
     );
   }
 
-  Widget _buildRandomHero(DiaryEntry entry) {
+  Widget _buildRandomHero(BuildContext context, DiaryEntry entry) {
     final years = controller.yearsFromNow(entry);
     final hasPhoto =
         entry.photoPath != null && entry.photoPath!.isNotEmpty;
@@ -114,12 +123,12 @@ class MemoriesView extends GetView<MemoriesLogic> {
       padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 0),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.cardBg,
+          color: AppPalette.surfaceElevated(context),
           borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: AppPalette.border(context)),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.08),
+              color: AppPalette.cardShadow(context),
               blurRadius: 20,
               offset: const Offset(0, 6),
             ),
@@ -130,206 +139,214 @@ class MemoriesView extends GetView<MemoriesLogic> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-                  Container(
-                    padding: EdgeInsets.fromLTRB(16.w, 14.h, 12.w, 14.h),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.peach,
-                          AppColors.peach.withValues(alpha: 0.3),
+              Container(
+                padding: EdgeInsets.fromLTRB(16.w, 14.h, 12.w, 14.h),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppPalette.peach(context),
+                      AppPalette.peach(context).withValues(alpha: 0.35),
+                    ],
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10.w),
+                      decoration: BoxDecoration(
+                        color: AppPalette.surface(context),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppPalette.border(context)),
+                      ),
+                      child: Icon(
+                        Icons.shuffle_rounded,
+                        size: 22.sp,
+                        color: AppPalette.primary(context),
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            Lang.memoriesRandom,
+                            style: AppTextStyles.pageTitle(
+                              size: 18.sp,
+                              context: context,
+                            ),
+                          ),
+                          Text(
+                            controller.formatDate(entry),
+                            style: AppTextStyles.caption(
+                              context: context,
+                              color: AppPalette.primary(context),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Container(
+                    Material(
+                      color: AppPalette.surface(context),
+                      shape: CircleBorder(
+                        side: BorderSide(color: AppPalette.border(context)),
+                      ),
+                      child: InkWell(
+                        onTap: controller.refreshRandom,
+                        customBorder: const CircleBorder(),
+                        child: Padding(
                           padding: EdgeInsets.all(10.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.cardBg,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.border),
-                          ),
                           child: Icon(
-                            Icons.shuffle_rounded,
-                            size: 22.sp,
-                            color: AppColors.primary,
+                            Icons.refresh_rounded,
+                            size: 20.sp,
+                            color: AppColors.cta,
                           ),
                         ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                Lang.memoriesRandom,
-                                style: AppTextStyles.pageTitle(size: 18.sp),
-                              ),
-                              Text(
-                                controller.formatDate(entry),
-                                style: AppTextStyles.caption(
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Material(
-                          color: AppColors.cardBg,
-                          shape: CircleBorder(
-                            side: BorderSide(color: AppColors.border),
-                          ),
-                          child: InkWell(
-                            onTap: controller.refreshRandom,
-                            customBorder: const CircleBorder(),
-                            child: Padding(
-                              padding: EdgeInsets.all(10.w),
-                              child: Icon(
-                                Icons.refresh_rounded,
-                                size: 20.sp,
-                                color: AppColors.cta,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(16.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              _moodIcons[entry.mood.clamp(0, 5)],
-                              size: 22.sp,
-                              color: AppColors.secondary,
-                            ),
-                            SizedBox(width: 8.w),
-                            if (years > 0)
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8.w,
-                                  vertical: 3.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.cta.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(8.r),
-                                ),
-                                child: Text(
-                                  '$years ${Lang.memoriesYearsAgo}',
-                                  style: AppTextStyles.caption(
-                                    color: AppColors.cta,
-                                    size: 11.sp,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                        SizedBox(height: 12.h),
-                        if (hasPhoto) ...[
-                          _PolaroidFrame(
-                            path: entry.photoPath!,
-                            onTap: () => controller.openPhoto(entry.photoPath!),
-                          ),
-                          SizedBox(height: 14.h),
-                        ],
-                        Text(
-                          entry.content,
-                          style: AppTextStyles.body(size: 15.sp),
-                          maxLines: 5,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        if (entry.weather.isNotEmpty ||
-                            entry.location.isNotEmpty) ...[
-                          SizedBox(height: 12.h),
-                          Wrap(
-                            spacing: 8.w,
-                            runSpacing: 6.h,
-                            children: [
-                              if (entry.weather.isNotEmpty)
-                                _MetaTag(Icons.wb_sunny_outlined, entry.weather),
-                              if (entry.location.isNotEmpty)
-                                _MetaTag(Icons.place_outlined, entry.location),
-                            ],
-                          ),
-                        ],
-                        SizedBox(height: 16.h),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Material(
-                                color: AppColors.cta.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(12.r),
-                                child: InkWell(
-                                  onTap: () => _showMemorySheet(entry),
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.menu_book_rounded,
-                                            size: 18.sp, color: AppColors.cta),
-                                        SizedBox(width: 6.w),
-                                        Text(
-                                          Lang.memoriesReadMore,
-                                          style: AppTextStyles.body(
-                                            color: AppColors.cta,
-                                            size: 14.sp,
-                                            weight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10.w),
-                            Expanded(
-                              child: Material(
-                                color: AppColors.primary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12.r),
-                                child: InkWell(
-                                  onTap: () => controller.openEntryInDiary(entry),
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.calendar_today_rounded,
-                                            size: 18.sp, color: AppColors.primary),
-                                        SizedBox(width: 6.w),
-                                        Text(
-                                          Lang.memoriesViewDiary,
-                                          style: AppTextStyles.body(
-                                            color: AppColors.primary,
-                                            size: 14.sp,
-                                            weight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+              Padding(
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          _moodIcons[entry.mood.clamp(0, 5)],
+                          size: 22.sp,
+                          color: AppColors.secondary,
+                        ),
+                        SizedBox(width: 8.w),
+                        if (years > 0)
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8.w,
+                              vertical: 3.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppPalette.accentSurface(context),
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Text(
+                              '$years ${Lang.memoriesYearsAgo}',
+                              style: AppTextStyles.caption(
+                                color: AppColors.cta,
+                                size: 11.sp,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    if (hasPhoto) ...[
+                      _PolaroidFrame(
+                        path: entry.photoPath!,
+                        onTap: () => controller.openPhoto(entry.photoPath!),
+                      ),
+                      SizedBox(height: 14.h),
+                    ],
+                    Text(
+                      entry.content,
+                      style: AppTextStyles.body(
+                        size: 15.sp,
+                        context: context,
+                      ),
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (entry.weather.isNotEmpty ||
+                        entry.location.isNotEmpty) ...[
+                      SizedBox(height: 12.h),
+                      Wrap(
+                        spacing: 8.w,
+                        runSpacing: 6.h,
+                        children: [
+                          if (entry.weather.isNotEmpty)
+                            _MetaTag(Icons.wb_sunny_outlined, entry.weather),
+                          if (entry.location.isNotEmpty)
+                            _MetaTag(Icons.place_outlined, entry.location),
+                        ],
+                      ),
+                    ],
+                    SizedBox(height: 16.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Material(
+                            color: AppPalette.accentSurface(context),
+                            borderRadius: BorderRadius.circular(12.r),
+                            child: InkWell(
+                              onTap: () => _showMemorySheet(context, entry),
+                              borderRadius: BorderRadius.circular(12.r),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.menu_book_rounded,
+                                        size: 18.sp, color: AppColors.cta),
+                                    SizedBox(width: 6.w),
+                                    Text(
+                                      Lang.memoriesReadMore,
+                                      style: AppTextStyles.body(
+                                        color: AppColors.cta,
+                                        size: 14.sp,
+                                        weight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          child: Material(
+                            color: AppPalette.primaryTint(context),
+                            borderRadius: BorderRadius.circular(12.r),
+                            child: InkWell(
+                              onTap: () => controller.openEntryInDiary(entry),
+                              borderRadius: BorderRadius.circular(12.r),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.calendar_today_rounded,
+                                        size: 18.sp,
+                                        color: AppPalette.primary(context)),
+                                    SizedBox(width: 6.w),
+                                    Text(
+                                      Lang.memoriesViewDiary,
+                                      style: AppTextStyles.body(
+                                        color: AppPalette.primary(context),
+                                        size: 14.sp,
+                                        weight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildPhotoWallHeader() {
+  Widget _buildPhotoWallHeader(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 10.h),
       child: Row(
@@ -338,23 +355,26 @@ class MemoriesView extends GetView<MemoriesLogic> {
             width: 4.w,
             height: 18.h,
             decoration: BoxDecoration(
-              color: AppColors.primary,
+              color: AppPalette.primary(context),
               borderRadius: BorderRadius.circular(2.r),
             ),
           ),
           SizedBox(width: 8.w),
-          Text(Lang.memoriesPhotos, style: AppTextStyles.pageTitle(size: 18.sp)),
+          Text(
+            Lang.memoriesPhotos,
+            style: AppTextStyles.pageTitle(size: 18.sp, context: context),
+          ),
           const Spacer(),
           Text(
             '${controller.photoCount}',
-            style: AppTextStyles.displayTitle(size: 24.sp),
+            style: AppTextStyles.displayTitle(size: 24.sp, context: context),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPhotoWall(List<DiaryEntry> photos) {
+  Widget _buildPhotoWall(BuildContext context, List<DiaryEntry> photos) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: GridView.builder(
@@ -383,7 +403,7 @@ class MemoriesView extends GetView<MemoriesLogic> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(32.w),
@@ -394,12 +414,12 @@ class MemoriesView extends GetView<MemoriesLogic> {
               width: 100.w,
               height: 100.w,
               decoration: BoxDecoration(
-                color: AppColors.peach,
+                color: AppPalette.peach(context),
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.border, width: 2),
+                border: Border.all(color: AppPalette.border(context), width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.1),
+                    color: AppPalette.cardShadow(context),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -408,14 +428,14 @@ class MemoriesView extends GetView<MemoriesLogic> {
               child: Icon(
                 Icons.auto_stories_outlined,
                 size: 48.sp,
-                color: AppColors.primary,
+                color: AppPalette.primary(context),
               ),
             ),
             SizedBox(height: 24.h),
             Text(
               Lang.memoriesEmpty,
               style: AppTextStyles.body(
-                color: AppColors.textSecondary,
+                context: context,
                 size: 15.sp,
               ),
               textAlign: TextAlign.center,
@@ -454,7 +474,7 @@ class MemoriesView extends GetView<MemoriesLogic> {
     );
   }
 
-  void _showMemorySheet(DiaryEntry entry) {
+  void _showMemorySheet(BuildContext context, DiaryEntry entry) {
     Get.bottomSheet(
       AppSheetContainer(
         child: Column(
@@ -466,10 +486,16 @@ class MemoriesView extends GetView<MemoriesLogic> {
             SizedBox(height: 8.h),
             Text(
               controller.formatDate(entry),
-              style: AppTextStyles.caption(color: AppColors.primary),
+              style: AppTextStyles.caption(
+                context: context,
+                color: AppPalette.primary(context),
+              ),
             ),
             SizedBox(height: 12.h),
-            Text(entry.content, style: AppTextStyles.body(size: 15.sp)),
+            Text(
+              entry.content,
+              style: AppTextStyles.body(size: 15.sp, context: context),
+            ),
             if (entry.photoPath != null && entry.photoPath!.isNotEmpty) ...[
               SizedBox(height: 16.h),
               ClipRRect(
@@ -515,9 +541,9 @@ class _SummaryChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withValues(alpha: AppPalette.isDark(context) ? 0.18 : 0.1),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppPalette.border(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -547,9 +573,9 @@ class _PolaroidFrame extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.fromLTRB(10.w, 10.w, 10.w, 24.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppPalette.polaroidBg(context),
             borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: AppPalette.border(context)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.1),
@@ -591,12 +617,12 @@ class _PhotoWallItem extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.fromLTRB(8.w, 8.w, 8.w, 20.w),
           decoration: BoxDecoration(
-            color: AppColors.cardBg,
+            color: AppPalette.surfaceElevated(context),
             borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: AppPalette.border(context)),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.06),
+                color: AppPalette.cardShadow(context),
                 blurRadius: 10,
                 offset: const Offset(0, 3),
               ),
@@ -616,7 +642,8 @@ class _PhotoWallItem extends StatelessWidget {
               Text(
                 dateLabel,
                 style: AppTextStyles.caption(
-                  color: AppColors.primary,
+                  context: context,
+                  color: AppPalette.primary(context),
                   size: 11.sp,
                 ),
                 textAlign: TextAlign.center,
@@ -642,9 +669,9 @@ class _MetaTag extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: AppColors.rowAlt,
+        color: AppPalette.rowAlt(context),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppPalette.border(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -653,7 +680,7 @@ class _MetaTag extends StatelessWidget {
           SizedBox(width: 4.w),
           Text(
             text,
-            style: AppTextStyles.caption(size: 11.sp),
+            style: AppTextStyles.caption(size: 11.sp, context: context),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

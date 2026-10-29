@@ -46,40 +46,45 @@ class StatsView extends GetView<StatsLogic> {
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: controller.loadData,
-                    color: AppColors.primary,
+                    color: AppPalette.primary(context),
                     child: ListView(
                       padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h),
                       children: [
-                        _buildPeriodFilter(),
+                        _buildPeriodFilter(context),
                         SizedBox(height: 14.h),
-                        _buildHeroCard(),
+                        _buildHeroCard(context),
                         SizedBox(height: 14.h),
-                        _buildKpiGrid(),
+                        _buildKpiGrid(context),
                         SizedBox(height: 8.h),
                         _buildSection(
+                          context: context,
                           icon: Icons.show_chart_rounded,
                           title: Lang.statsTrend,
-                          child: _buildTrend(),
+                          child: _buildTrend(context),
                         ),
                         _buildSection(
+                          context: context,
                           icon: Icons.emoji_emotions_outlined,
                           title: Lang.statsMood,
-                          child: _buildMood(),
+                          child: _buildMood(context),
                         ),
                         _buildSection(
+                          context: context,
                           icon: Icons.place_outlined,
                           title: Lang.statsLocation,
-                          child: _buildLocations(),
+                          child: _buildLocations(context),
                         ),
                         _buildSection(
+                          context: context,
                           icon: Icons.monitor_weight_outlined,
                           title: Lang.statsWeight,
-                          child: _buildWeight(),
+                          child: _buildWeight(context),
                         ),
                         _buildSection(
+                          context: context,
                           icon: Icons.insights_outlined,
                           title: Lang.statsActivity,
-                          child: _buildActivity(),
+                          child: _buildActivity(context),
                         ),
                       ],
                     ),
@@ -93,13 +98,13 @@ class StatsView extends GetView<StatsLogic> {
     );
   }
 
-  Widget _buildPeriodFilter() {
+  Widget _buildPeriodFilter(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: AppColors.cardBg,
+        color: AppPalette.surfaceElevated(context),
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppPalette.border(context)),
       ),
       child: Row(
         children: [
@@ -123,20 +128,23 @@ class StatsView extends GetView<StatsLogic> {
     );
   }
 
-  Widget _buildHeroCard() {
+  Widget _buildHeroCard(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.peach, AppColors.cardBg],
+          colors: [
+            AppPalette.peach(context),
+            AppPalette.surfaceElevated(context),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppPalette.border(context)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: AppPalette.cardShadow(context),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -151,12 +159,12 @@ class StatsView extends GetView<StatsLogic> {
               children: [
                 Text(
                   Lang.statsHeroEntries,
-                  style: AppTextStyles.caption(color: AppColors.textSecondary),
+                  style: AppTextStyles.caption(context: context),
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   '${controller.totalEntries.value}',
-                  style: AppTextStyles.displayTitle(size: 48.sp),
+                  style: AppTextStyles.displayTitle(size: 48.sp, context: context),
                 ),
               ],
             ),
@@ -173,7 +181,7 @@ class StatsView extends GetView<StatsLogic> {
               _HeroBadge(
                 icon: Icons.timeline_rounded,
                 label:
-                    '${Lang.statsHeroDaily} ${controller.dailyAvg.value.toStringAsFixed(2)}',
+                '${Lang.statsHeroDaily} ${controller.dailyAvg.value.toStringAsFixed(2)}',
                 color: AppColors.cta,
               ),
             ],
@@ -183,7 +191,7 @@ class StatsView extends GetView<StatsLogic> {
     );
   }
 
-  Widget _buildKpiGrid() {
+  Widget _buildKpiGrid(BuildContext context) {
     final kpis = [
       (Lang.statsKpiWords, '${controller.totalWords.value}'),
       (Lang.statsKpiPhotos, '${controller.photoCount.value}'),
@@ -205,9 +213,9 @@ class StatsView extends GetView<StatsLogic> {
         return Container(
           padding: EdgeInsets.all(14.w),
           decoration: BoxDecoration(
-            color: AppColors.cardBg,
+            color: AppPalette.surfaceElevated(context),
             borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: AppPalette.border(context)),
           ),
           child: Row(
             children: [
@@ -215,10 +223,14 @@ class StatsView extends GetView<StatsLogic> {
                 width: 36.w,
                 height: 36.w,
                 decoration: BoxDecoration(
-                  color: AppColors.peach,
+                  color: AppPalette.peach(context),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: Icon(_kpiIcons[i], size: 20.sp, color: AppColors.primary),
+                child: Icon(
+                  _kpiIcons[i],
+                  size: 20.sp,
+                  color: AppPalette.primary(context),
+                ),
               ),
               SizedBox(width: 10.w),
               Expanded(
@@ -228,7 +240,7 @@ class StatsView extends GetView<StatsLogic> {
                   children: [
                     Text(
                       kpis[i].$1,
-                      style: AppTextStyles.caption(size: 11.sp),
+                      style: AppTextStyles.caption(size: 11.sp, context: context),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -236,7 +248,8 @@ class StatsView extends GetView<StatsLogic> {
                       kpis[i].$2,
                       style: AppTextStyles.pageTitle(
                         size: 20.sp,
-                        color: AppColors.primary,
+                        context: context,
+                        color: AppPalette.primary(context),
                       ),
                     ),
                   ],
@@ -250,6 +263,7 @@ class StatsView extends GetView<StatsLogic> {
   }
 
   Widget _buildSection({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required Widget child,
@@ -258,12 +272,12 @@ class StatsView extends GetView<StatsLogic> {
       padding: EdgeInsets.only(top: 14.h),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.cardBg,
+          color: AppPalette.surfaceElevated(context),
           borderRadius: BorderRadius.circular(18.r),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: AppPalette.border(context)),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.04),
+              color: AppPalette.cardShadow(context),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -276,20 +290,27 @@ class StatsView extends GetView<StatsLogic> {
             children: [
               Container(
                 padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 12.h),
-                color: AppColors.rowAlt,
+                color: AppPalette.sectionHeaderBg(context),
                 child: Row(
                   children: [
                     Container(
                       width: 32.w,
                       height: 32.w,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
+                        color: AppPalette.primaryTint(context),
                         borderRadius: BorderRadius.circular(8.r),
                       ),
-                      child: Icon(icon, size: 18.sp, color: AppColors.primary),
+                      child: Icon(
+                        icon,
+                        size: 18.sp,
+                        color: AppPalette.primary(context),
+                      ),
                     ),
                     SizedBox(width: 10.w),
-                    Text(title, style: AppTextStyles.pageTitle(size: 16.sp)),
+                    Text(
+                      title,
+                      style: AppTextStyles.pageTitle(size: 16.sp, context: context),
+                    ),
                   ],
                 ),
               ),
@@ -304,9 +325,9 @@ class StatsView extends GetView<StatsLogic> {
     );
   }
 
-  Widget _buildTrend() {
+  Widget _buildTrend(BuildContext context) {
     if (controller.trendValues.isEmpty) {
-      return _emptyHint(Lang.emptyNoData);
+      return _emptyHint(context, Lang.emptyNoData);
     }
     return SimpleBarChart(
       values: controller.trendValues,
@@ -315,9 +336,9 @@ class StatsView extends GetView<StatsLogic> {
     );
   }
 
-  Widget _buildMood() {
+  Widget _buildMood(BuildContext context) {
     if (controller.moodStats.isEmpty) {
-      return _emptyHint(Lang.emptyNoData);
+      return _emptyHint(context, Lang.emptyNoData);
     }
     final max = controller.moodStats
         .map((e) => e.count)
@@ -348,9 +369,9 @@ class StatsView extends GetView<StatsLogic> {
     );
   }
 
-  Widget _buildLocations() {
+  Widget _buildLocations(BuildContext context) {
     if (controller.locations.isEmpty) {
-      return _emptyHint(Lang.emptyNoLocation);
+      return _emptyHint(context, Lang.emptyNoLocation);
     }
     final max = controller.locations.first.count;
     return Column(
@@ -376,9 +397,9 @@ class StatsView extends GetView<StatsLogic> {
     );
   }
 
-  Widget _buildWeight() {
+  Widget _buildWeight(BuildContext context) {
     if (controller.weights.isEmpty) {
-      return _emptyHint(Lang.emptyNoWeight);
+      return _emptyHint(context, Lang.emptyNoWeight);
     }
     return Column(
       children: controller.weights.map((w) {
@@ -389,22 +410,26 @@ class StatsView extends GetView<StatsLogic> {
           margin: EdgeInsets.only(bottom: 8.h),
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
           decoration: BoxDecoration(
-            color: AppColors.rowAlt,
+            color: AppPalette.rowAlt(context),
             borderRadius: BorderRadius.circular(10.r),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: AppPalette.border(context)),
           ),
           child: Row(
             children: [
               Icon(Icons.circle, size: 8.sp, color: AppColors.cta),
               SizedBox(width: 10.w),
-              Text(dateStr, style: AppTextStyles.caption()),
+              Text(
+                dateStr,
+                style: AppTextStyles.caption(context: context),
+              ),
               const Spacer(),
               Text(
                 '${w.weight.toStringAsFixed(1)} kg',
                 style: AppTextStyles.body(
                   size: 14.sp,
                   weight: FontWeight.w700,
-                  color: AppColors.primary,
+                  context: context,
+                  color: AppPalette.primary(context),
                 ),
               ),
             ],
@@ -414,7 +439,7 @@ class StatsView extends GetView<StatsLogic> {
     );
   }
 
-  Widget _buildActivity() {
+  Widget _buildActivity(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -438,11 +463,11 @@ class StatsView extends GetView<StatsLogic> {
     );
   }
 
-  Widget _emptyHint(String text) {
+  Widget _emptyHint(BuildContext context, String text) {
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 12.h),
-        child: Text(text, style: AppTextStyles.caption()),
+        child: Text(text, style: AppTextStyles.caption(context: context)),
       ),
     );
   }
@@ -463,7 +488,7 @@ class _PeriodTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Material(
-        color: selected ? AppColors.primary : Colors.transparent,
+        color: selected ? AppPalette.primary(context) : Colors.transparent,
         borderRadius: BorderRadius.circular(10.r),
         child: InkWell(
           onTap: onTap,
@@ -476,7 +501,9 @@ class _PeriodTab extends StatelessWidget {
               style: AppTextStyles.body(
                 size: 13.sp,
                 weight: selected ? FontWeight.w700 : FontWeight.w500,
-                color: selected ? Colors.white : AppColors.textSecondary,
+                color: selected
+                    ? Colors.white
+                    : AppPalette.textSecondary(context),
               ),
             ),
           ),

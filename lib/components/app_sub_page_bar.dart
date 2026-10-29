@@ -25,8 +25,8 @@ class AppSubPageBar extends StatelessWidget {
       child: Row(
         children: [
           Material(
-            color: AppColors.cardBg,
-            shape: CircleBorder(side: BorderSide(color: AppColors.border)),
+            color: AppPalette.surface(context),
+            shape: CircleBorder(side: BorderSide(color: AppPalette.border(context))),
             child: InkWell(
               onTap: onBack ?? () => Get.back(),
               customBorder: const CircleBorder(),
@@ -45,9 +45,21 @@ class AppSubPageBar extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: AppTextStyles.pageTitle(size: 20.sp)),
+                Text(
+                  title,
+                  style: AppTextStyles.pageTitle(
+                    size: 20.sp,
+                    color: AppPalette.textPrimary(context),
+                  ),
+                ),
                 if (subtitle != null)
-                  Text(subtitle!, style: AppTextStyles.caption(size: 12.sp)),
+                  Text(
+                    subtitle!,
+                    style: AppTextStyles.caption(
+                      size: 12.sp,
+                      color: AppPalette.textSecondary(context),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -75,8 +87,8 @@ class AppCircleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: bgColor ?? AppColors.cardBg,
-      shape: CircleBorder(side: BorderSide(color: AppColors.border)),
+      color: bgColor ?? AppPalette.surface(context),
+      shape: CircleBorder(side: BorderSide(color: AppPalette.border(context))),
       child: InkWell(
         onTap: onTap,
         customBorder: const CircleBorder(),

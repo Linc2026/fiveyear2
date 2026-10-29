@@ -23,11 +23,11 @@ class DiaryView extends GetView<DiaryLogic> {
             children: [
               Column(
                 children: [
-                  _buildTopBar(),
-                  _buildQuoteBanner(),
-                  _buildDateHero(),
-                  _buildProgressStrip(),
-                  Expanded(child: _buildNotebook()),
+                  _buildTopBar(context),
+                  _buildQuoteBanner(context),
+                  _buildDateHero(context),
+                  _buildProgressStrip(context),
+                  Expanded(child: _buildNotebook(context)),
                 ],
               ),
               if (controller.isSelectedToday)
@@ -43,7 +43,7 @@ class DiaryView extends GetView<DiaryLogic> {
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 8.h, 12.w, 0),
       child: Row(
@@ -53,16 +53,22 @@ class DiaryView extends GetView<DiaryLogic> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(Lang.diaryTitle, style: AppTextStyles.pageTitle()),
+                Text(
+                  Lang.diaryTitle,
+                  style: AppTextStyles.pageTitle(context: context),
+                ),
                 SizedBox(height: 2.h),
-                Text(Lang.diarySubtitle, style: AppTextStyles.caption()),
+                Text(
+                  Lang.diarySubtitle,
+                  style: AppTextStyles.caption(context: context),
+                ),
               ],
             ),
           ),
           Material(
-            color: AppColors.cardBg,
+            color: AppPalette.surface(context),
             shape: CircleBorder(
-              side: BorderSide(color: AppColors.border),
+              side: BorderSide(color: AppPalette.border(context)),
             ),
             child: InkWell(
               onTap: controller.openSettings,
@@ -72,7 +78,7 @@ class DiaryView extends GetView<DiaryLogic> {
                 child: Icon(
                   Icons.tune_rounded,
                   size: 20.sp,
-                  color: AppColors.primary,
+                  color: AppPalette.primary(context),
                 ),
               ),
             ),
@@ -82,45 +88,58 @@ class DiaryView extends GetView<DiaryLogic> {
     );
   }
 
-  Widget _buildQuoteBanner() {
+  Widget _buildQuoteBanner(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 0),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         decoration: BoxDecoration(
-          color: AppColors.cardBg.withValues(alpha: 0.85),
+          color: AppPalette.surfaceMuted(context),
           borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: AppPalette.border(context)),
         ),
         child: Row(
           children: [
-            Text(Lang.diaryQuoteOpen,
-                style: AppTextStyles.quote(color: AppColors.primaryLight)),
+            Text(
+              Lang.diaryQuoteOpen,
+              style: AppTextStyles.quote(
+                context: context,
+                color: AppPalette.quoteTint(context),
+              ),
+            ),
             Expanded(
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  style: AppTextStyles.quote(),
+                  style: AppTextStyles.quote(context: context),
                   children: [
                     const TextSpan(text: Lang.diaryQuotePrefix),
                     TextSpan(
                       text: Lang.diaryQuoteHighlight,
-                      style: AppTextStyles.quote(color: AppColors.secondary),
+                      style: AppTextStyles.quote(
+                        context: context,
+                        color: AppColors.secondary,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            Text(Lang.diaryQuoteClose,
-                style: AppTextStyles.quote(color: AppColors.primaryLight)),
+            Text(
+              Lang.diaryQuoteClose,
+              style: AppTextStyles.quote(
+                context: context,
+                color: AppPalette.quoteTint(context),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDateHero() {
+  Widget _buildDateHero(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 0),
       child: Container(
@@ -128,17 +147,17 @@ class DiaryView extends GetView<DiaryLogic> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.peach,
-              AppColors.cardBg,
+              AppPalette.peach(context),
+              AppPalette.surfaceElevated(context),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: AppPalette.border(context)),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.08),
+              color: AppPalette.cardShadow(context),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -155,18 +174,21 @@ class DiaryView extends GetView<DiaryLogic> {
                 children: [
                   Text(
                     controller.dateLabel,
-                    style: AppTextStyles.displayTitle(size: 36.sp),
+                    style: AppTextStyles.displayTitle(size: 36.sp, context: context),
                   ),
                   SizedBox(height: 2.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.calendar_today_rounded,
-                          size: 13.sp, color: AppColors.textSecondary),
+                      Icon(
+                        Icons.calendar_today_rounded,
+                        size: 13.sp,
+                        color: AppPalette.textSecondary(context),
+                      ),
                       SizedBox(width: 4.w),
                       Text(
                         controller.weekdayLabel,
-                        style: AppTextStyles.caption(),
+                        style: AppTextStyles.caption(context: context),
                       ),
                       if (controller.isSelectedToday) ...[
                         SizedBox(width: 8.w),
@@ -176,7 +198,7 @@ class DiaryView extends GetView<DiaryLogic> {
                             vertical: 2.h,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.cta.withValues(alpha: 0.15),
+                            color: AppPalette.accentSoft(context),
                             borderRadius: BorderRadius.circular(10.r),
                           ),
                           child: Text(
@@ -213,14 +235,17 @@ class DiaryView extends GetView<DiaryLogic> {
     );
   }
 
-  Widget _buildProgressStrip() {
+  Widget _buildProgressStrip(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
       child: Row(
         children: [
           Text(
             '${Lang.diaryFilled} ${controller.filledCount}/5 ${Lang.diaryYears}',
-            style: AppTextStyles.caption(color: AppColors.primary),
+            style: AppTextStyles.caption(
+              context: context,
+              color: AppPalette.primary(context),
+            ),
           ),
           SizedBox(width: 12.w),
           Expanded(
@@ -233,10 +258,14 @@ class DiaryView extends GetView<DiaryLogic> {
                     height: 6.h,
                     margin: EdgeInsets.only(right: i < 4 ? 6.w : 0),
                     decoration: BoxDecoration(
-                      color: filled ? AppColors.primary : AppColors.rowAlt,
+                      color: filled
+                          ? AppPalette.primary(context)
+                          : AppPalette.rowAlt(context),
                       borderRadius: BorderRadius.circular(3.r),
                       border: Border.all(
-                        color: filled ? AppColors.primary : AppColors.border,
+                        color: filled
+                            ? AppPalette.primary(context)
+                            : AppPalette.border(context),
                       ),
                     ),
                   ),
@@ -249,17 +278,17 @@ class DiaryView extends GetView<DiaryLogic> {
     );
   }
 
-  Widget _buildNotebook() {
+  Widget _buildNotebook(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 16.h),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.cardBg,
+          color: AppPalette.surfaceElevated(context),
           borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: AppPalette.border(context)),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.06),
+              color: AppPalette.cardShadow(context),
               blurRadius: 20,
               offset: const Offset(0, 6),
             ),
@@ -270,11 +299,11 @@ class DiaryView extends GetView<DiaryLogic> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildBindingStrip(),
+              _buildBindingStrip(context),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: controller.loadData,
-                  color: AppColors.primary,
+                  color: AppPalette.primary(context),
                   edgeOffset: 8,
                   child: ListView.separated(
                     padding: EdgeInsets.fromLTRB(12.w, 16.h, 16.w, 16.h),
@@ -284,12 +313,12 @@ class DiaryView extends GetView<DiaryLogic> {
                       child: Row(
                         children: List.generate(
                           24,
-                          (i) => Expanded(
+                              (i) => Expanded(
                             child: Container(
                               height: 1,
                               margin: EdgeInsets.symmetric(horizontal: 1.w),
                               color: i.isEven
-                                  ? AppColors.border
+                                  ? AppPalette.border(context)
                                   : Colors.transparent,
                             ),
                           ),
@@ -317,21 +346,24 @@ class DiaryView extends GetView<DiaryLogic> {
     );
   }
 
-  Widget _buildBindingStrip() {
+  Widget _buildBindingStrip(BuildContext context) {
     return Container(
       width: 28.w,
-      color: AppColors.rowAlt,
+      color: AppPalette.rowAlt(context),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(
           8,
-          (_) => Container(
+              (_) => Container(
             width: 10.w,
             height: 10.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.background,
-              border: Border.all(color: AppColors.border, width: 1.5),
+              color: AppPalette.bindingHole(context),
+              border: Border.all(
+                color: AppPalette.border(context),
+                width: 1.5,
+              ),
             ),
           ),
         ),
@@ -380,14 +412,14 @@ class _DateNavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.cardBg,
-      shape: CircleBorder(side: BorderSide(color: AppColors.border)),
+      color: AppPalette.surface(context),
+      shape: CircleBorder(side: BorderSide(color: AppPalette.border(context))),
       child: InkWell(
         onTap: onTap,
         customBorder: const CircleBorder(),
         child: Padding(
           padding: EdgeInsets.all(6.w),
-          child: Icon(icon, size: 26.sp, color: AppColors.primary),
+          child: Icon(icon, size: 26.sp, color: AppPalette.primary(context)),
         ),
       ),
     );
@@ -437,13 +469,13 @@ class _YearTimelineEntry extends StatelessWidget {
           padding: EdgeInsets.all(12.w),
           decoration: BoxDecoration(
             color: hasContent
-                ? AppColors.peach.withValues(alpha: 0.35)
+                ? AppPalette.highlightFill(context)
                 : (isCurrentYear && !isFuture
-                    ? AppColors.rowAlt
-                    : Colors.transparent),
+                ? AppPalette.rowAlt(context)
+                : Colors.transparent),
             borderRadius: BorderRadius.circular(14.r),
             border: isCurrentYear && !isFuture
-                ? Border.all(color: AppColors.cta.withValues(alpha: 0.35))
+                ? Border.all(color: AppColors.cta.withValues(alpha: 0.45))
                 : null,
           ),
           child: Row(
@@ -456,9 +488,13 @@ class _YearTimelineEntry extends StatelessWidget {
                     height: 10.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: hasContent ? AppColors.primary : AppColors.border,
+                      color: hasContent
+                          ? AppPalette.primary(context)
+                          : AppPalette.border(context),
                       border: Border.all(
-                        color: hasContent ? AppColors.primary : AppColors.textSecondary,
+                        color: hasContent
+                            ? AppPalette.primary(context)
+                            : AppPalette.textSecondary(context),
                         width: 1.5,
                       ),
                     ),
@@ -478,16 +514,18 @@ class _YearTimelineEntry extends StatelessWidget {
                             vertical: 4.h,
                           ),
                           decoration: BoxDecoration(
-                            color: hasContent
-                                ? AppColors.primary.withValues(alpha: 0.12)
-                                : AppColors.rowAlt,
+                            color: AppPalette.yearChipBg(
+                              context,
+                              hasContent: hasContent,
+                            ),
                             borderRadius: BorderRadius.circular(8.r),
                           ),
                           child: Text(
                             '$year',
                             style: AppTextStyles.pageTitle(
                               size: 18.sp,
-                              color: AppColors.primary,
+                              context: context,
+                              color: AppPalette.primary(context),
                             ),
                           ),
                         ),
@@ -507,7 +545,7 @@ class _YearTimelineEntry extends StatelessWidget {
                               vertical: 2.h,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.cta.withValues(alpha: 0.15),
+                              color: AppPalette.accentSoft(context),
                               borderRadius: BorderRadius.circular(6.r),
                             ),
                             child: Text(
@@ -521,7 +559,13 @@ class _YearTimelineEntry extends StatelessWidget {
                         ],
                         const Spacer(),
                         if (hasContent)
-                          Text(weekday, style: AppTextStyles.caption(size: 11.sp)),
+                          Text(
+                            weekday,
+                            style: AppTextStyles.caption(
+                              size: 11.sp,
+                              context: context,
+                            ),
+                          ),
                       ],
                     ),
                     SizedBox(height: 8.h),
@@ -532,7 +576,10 @@ class _YearTimelineEntry extends StatelessWidget {
                           Expanded(
                             child: Text(
                               entry!.content,
-                              style: AppTextStyles.body(size: 14.sp),
+                              style: AppTextStyles.body(
+                                size: 14.sp,
+                                context: context,
+                              ),
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -576,7 +623,7 @@ class _YearTimelineEntry extends StatelessWidget {
                                   ? Lang.diaryFutureHint
                                   : Lang.diaryEmptyHint,
                               style: AppTextStyles.caption(
-                                color: AppColors.textSecondary,
+                                context: context,
                               ).copyWith(fontStyle: FontStyle.italic),
                             ),
                           ),
@@ -587,7 +634,7 @@ class _YearTimelineEntry extends StatelessWidget {
                                 vertical: 6.h,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.cta.withValues(alpha: 0.12),
+                                color: AppPalette.accentSurface(context),
                                 borderRadius: BorderRadius.circular(20.r),
                               ),
                               child: Row(
@@ -628,9 +675,9 @@ class _PolaroidThumb extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppPalette.polaroidBg(context),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppPalette.border(context)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),
@@ -662,9 +709,9 @@ class _MetaTag extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: AppColors.cardBg,
+        color: AppPalette.surface(context),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppPalette.border(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -673,7 +720,7 @@ class _MetaTag extends StatelessWidget {
           SizedBox(width: 4.w),
           Text(
             text,
-            style: AppTextStyles.caption(size: 11.sp),
+            style: AppTextStyles.caption(size: 11.sp, context: context),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

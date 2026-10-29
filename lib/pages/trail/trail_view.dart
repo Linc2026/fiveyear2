@@ -20,13 +20,6 @@ class TrailView extends GetView<TrailLogic> {
     Color(0xFFE84855),
   ];
 
-  static const _heatmapColors = [
-    AppColors.rowAlt,
-    Color(0xFF99F6E4),
-    Color(0xFF2DD4BF),
-    Color(0xFF0F9488),
-  ];
-
   static IconData _badgeIcon(String id) {
     switch (id) {
       case 'first':
@@ -57,35 +50,39 @@ class TrailView extends GetView<TrailLogic> {
           controller.loading.value;
           return RefreshIndicator(
             onRefresh: controller.loadData,
-            color: AppColors.primary,
+            color: AppPalette.primary(context),
             child: ListView(
               padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 28.h),
               children: [
-                _buildHeader(),
+                _buildHeader(context),
                 SizedBox(height: 14.h),
                 _buildHeroCard(),
                 _buildSection(
+                  context: context,
                   icon: Icons.grid_view_rounded,
                   title: Lang.trailHeatmap,
                   subtitle: Lang.trailHeatmapPeriod,
-                  child: _buildHeatmap(),
+                  child: _buildHeatmap(context),
                 ),
                 _buildSection(
+                  context: context,
                   icon: Icons.palette_rounded,
                   title: Lang.trailMoodMosaic,
                   subtitle: Lang.trailMoodMosaicHint,
-                  tint: AppColors.peach.withValues(alpha: 0.35),
-                  child: _buildMoodMosaic(),
+                  tint: AppPalette.peach(context).withValues(alpha: 0.55),
+                  child: _buildMoodMosaic(context),
                 ),
                 _buildSection(
+                  context: context,
                   icon: Icons.bar_chart_rounded,
                   title: Lang.trailRhythm,
-                  child: _buildRhythm(),
+                  child: _buildRhythm(context),
                 ),
                 _buildSection(
+                  context: context,
                   icon: Icons.military_tech_rounded,
                   title: Lang.trailMilestones,
-                  child: _buildMilestones(),
+                  child: _buildMilestones(context),
                 ),
               ],
             ),
@@ -95,15 +92,21 @@ class TrailView extends GetView<TrailLogic> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(Lang.trailTitle, style: AppTextStyles.pageTitle()),
+          Text(
+            Lang.trailTitle,
+            style: AppTextStyles.pageTitle(context: context),
+          ),
           SizedBox(height: 4.h),
-          Text(Lang.trailSubtitle, style: AppTextStyles.caption()),
+          Text(
+            Lang.trailSubtitle,
+            style: AppTextStyles.caption(context: context),
+          ),
         ],
       ),
     );
@@ -172,7 +175,7 @@ class TrailView extends GetView<TrailLogic> {
                   icon: Icons.emoji_events_rounded,
                   label: Lang.trailHeroBadges,
                   value:
-                      '${controller.unlockedBadges.value}/${controller.badges.length}',
+                  '${controller.unlockedBadges.value}/${controller.badges.length}',
                 ),
               ),
             ],
@@ -183,6 +186,7 @@ class TrailView extends GetView<TrailLogic> {
   }
 
   Widget _buildSection({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required Widget child,
@@ -193,12 +197,12 @@ class TrailView extends GetView<TrailLogic> {
       padding: EdgeInsets.only(top: 14.h),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.cardBg,
+          color: AppPalette.surfaceElevated(context),
           borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: AppPalette.border(context)),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.05),
+              color: AppPalette.cardShadow(context),
               blurRadius: 14,
               offset: Offset(0, 4.h),
             ),
@@ -211,17 +215,21 @@ class TrailView extends GetView<TrailLogic> {
             children: [
               Container(
                 padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 12.h),
-                color: tint ?? AppColors.rowAlt,
+                color: tint ?? AppPalette.sectionHeaderBg(context),
                 child: Row(
                   children: [
                     Container(
                       width: 34.w,
                       height: 34.w,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.12),
+                        color: AppPalette.primaryTint(context),
                         borderRadius: BorderRadius.circular(10.r),
                       ),
-                      child: Icon(icon, size: 18.sp, color: AppColors.primary),
+                      child: Icon(
+                        icon,
+                        size: 18.sp,
+                        color: AppPalette.primary(context),
+                      ),
                     ),
                     SizedBox(width: 10.w),
                     Expanded(
@@ -230,13 +238,19 @@ class TrailView extends GetView<TrailLogic> {
                         children: [
                           Text(
                             title,
-                            style: AppTextStyles.pageTitle(size: 16.sp),
+                            style: AppTextStyles.pageTitle(
+                              size: 16.sp,
+                              context: context,
+                            ),
                           ),
                           if (subtitle != null) ...[
                             SizedBox(height: 2.h),
                             Text(
                               subtitle,
-                              style: AppTextStyles.caption(size: 11.sp),
+                              style: AppTextStyles.caption(
+                                size: 11.sp,
+                                context: context,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -258,11 +272,15 @@ class TrailView extends GetView<TrailLogic> {
     );
   }
 
-  Widget _buildHeatmap() {
+  Widget _buildHeatmap(BuildContext context) {
     if (controller.heatmap.isEmpty) {
-      return Text(Lang.emptyNoData, style: AppTextStyles.caption());
+      return Text(
+        Lang.emptyNoData,
+        style: AppTextStyles.caption(context: context),
+      );
     }
 
+    final heatmapColors = AppPalette.heatmapScale(context);
     final weekdays = Lang.calendarWeekdays;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -275,7 +293,7 @@ class TrailView extends GetView<TrailLogic> {
                   weekdays[i].substring(0, 1),
                   style: AppTextStyles.caption(
                     size: 10.sp,
-                    color: AppColors.textSecondary,
+                    context: context,
                   ),
                 ),
               ),
@@ -283,12 +301,15 @@ class TrailView extends GetView<TrailLogic> {
           }),
         ),
         SizedBox(height: 8.h),
-        _buildHeatmapGrid(controller.heatmap),
+        _buildHeatmapGrid(context, controller.heatmap, heatmapColors),
         SizedBox(height: 12.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(Lang.trailLess, style: AppTextStyles.caption(size: 9.sp)),
+            Text(
+              Lang.trailLess,
+              style: AppTextStyles.caption(size: 9.sp, context: context),
+            ),
             SizedBox(width: 6.w),
             ...List.generate(4, (i) {
               return Padding(
@@ -297,24 +318,31 @@ class TrailView extends GetView<TrailLogic> {
                   width: 14.w,
                   height: 14.w,
                   decoration: BoxDecoration(
-                    color: _heatmapColors[i],
+                    color: heatmapColors[i],
                     borderRadius: BorderRadius.circular(4.r),
                     border: Border.all(
-                      color: AppColors.border.withValues(alpha: 0.6),
+                      color: AppPalette.border(context).withValues(alpha: 0.6),
                     ),
                   ),
                 ),
               );
             }),
             SizedBox(width: 6.w),
-            Text(Lang.trailMore, style: AppTextStyles.caption(size: 9.sp)),
+            Text(
+              Lang.trailMore,
+              style: AppTextStyles.caption(size: 9.sp, context: context),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildHeatmapGrid(List<HeatmapCell> cells) {
+  Widget _buildHeatmapGrid(
+      BuildContext context,
+      List<HeatmapCell> cells,
+      List<Color> heatmapColors,
+      ) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -333,21 +361,21 @@ class TrailView extends GetView<TrailLogic> {
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOut,
           decoration: BoxDecoration(
-            color: _heatmapColors[level],
+            color: heatmapColors[level],
             borderRadius: BorderRadius.circular(6.r),
             border: Border.all(
               color: active
-                  ? AppColors.primary.withValues(alpha: 0.25)
-                  : AppColors.border.withValues(alpha: 0.7),
+                  ? AppPalette.primary(context).withValues(alpha: 0.35)
+                  : AppPalette.border(context).withValues(alpha: 0.7),
             ),
             boxShadow: active
                 ? [
-                    BoxShadow(
-                      color: AppColors.primaryLight.withValues(alpha: 0.25),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ]
+              BoxShadow(
+                color: AppColors.primaryLight.withValues(alpha: 0.25),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ]
                 : null,
           ),
         );
@@ -355,7 +383,7 @@ class TrailView extends GetView<TrailLogic> {
     );
   }
 
-  Widget _buildMoodMosaic() {
+  Widget _buildMoodMosaic(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -374,21 +402,23 @@ class TrailView extends GetView<TrailLogic> {
             final filled = mood >= 0;
             return Container(
               decoration: BoxDecoration(
-                color: filled ? _moodColors[mood.clamp(0, 5)] : AppColors.rowAlt,
+                color: filled
+                    ? _moodColors[mood.clamp(0, 5)]
+                    : AppPalette.rowAlt(context),
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(
                   color: filled
                       ? Colors.white.withValues(alpha: 0.35)
-                      : AppColors.border,
+                      : AppPalette.border(context),
                 ),
                 boxShadow: filled
                     ? [
-                        BoxShadow(
-                          color: _moodColors[mood.clamp(0, 5)].withValues(alpha: 0.35),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ]
+                  BoxShadow(
+                    color: _moodColors[mood.clamp(0, 5)].withValues(alpha: 0.35),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
                     : null,
               ),
             );
@@ -413,7 +443,7 @@ class TrailView extends GetView<TrailLogic> {
                 SizedBox(width: 4.w),
                 Text(
                   Lang.moodLabels[i],
-                  style: AppTextStyles.caption(size: 9.sp),
+                  style: AppTextStyles.caption(size: 9.sp, context: context),
                 ),
               ],
             );
@@ -423,7 +453,7 @@ class TrailView extends GetView<TrailLogic> {
     );
   }
 
-  Widget _buildRhythm() {
+  Widget _buildRhythm(BuildContext context) {
     final weekdays = Lang.calendarWeekdays;
     final maxWd = controller.weekdayCounts.isEmpty
         ? 1
@@ -455,7 +485,9 @@ class TrailView extends GetView<TrailLogic> {
                           '$count',
                           style: AppTextStyles.caption(
                             size: 9.sp,
-                            color: isTop ? AppColors.cta : AppColors.textSecondary,
+                            color: isTop
+                                ? AppColors.cta
+                                : AppPalette.textSecondary(context),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -472,9 +504,9 @@ class TrailView extends GetView<TrailLogic> {
                             colors: isTop
                                 ? [AppColors.cta, AppColors.cta.withValues(alpha: 0.55)]
                                 : [
-                                    AppColors.primaryLight,
-                                    AppColors.primaryLight.withValues(alpha: 0.45),
-                                  ],
+                              AppPalette.primary(context),
+                              AppPalette.primary(context).withValues(alpha: 0.45),
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
@@ -495,7 +527,9 @@ class TrailView extends GetView<TrailLogic> {
                 weekdays[i].substring(0, 2),
                 style: AppTextStyles.caption(
                   size: 9.sp,
-                  color: isTop ? AppColors.primary : AppColors.textSecondary,
+                  color: isTop
+                      ? AppPalette.primary(context)
+                      : AppPalette.textSecondary(context),
                 ).copyWith(fontWeight: isTop ? FontWeight.w700 : FontWeight.w500),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -512,7 +546,7 @@ class TrailView extends GetView<TrailLogic> {
                 icon: Icons.calendar_today_rounded,
                 label: Lang.trailTopDay,
                 value: controller.topWeekday,
-                accent: AppColors.primary,
+                accent: AppPalette.primary(context),
               ),
             ),
             SizedBox(width: 8.w),
@@ -530,7 +564,7 @@ class TrailView extends GetView<TrailLogic> {
     );
   }
 
-  Widget _buildMilestones() {
+  Widget _buildMilestones(BuildContext context) {
     final unlocked = controller.unlockedBadges.value;
     final total = controller.badges.length;
     final progress = total == 0 ? 0.0 : unlocked / total;
@@ -546,8 +580,8 @@ class TrailView extends GetView<TrailLogic> {
                 child: LinearProgressIndicator(
                   value: progress,
                   minHeight: 8.h,
-                  backgroundColor: AppColors.rowAlt,
-                  color: AppColors.primaryLight,
+                  backgroundColor: AppPalette.rowAlt(context),
+                  color: AppPalette.primary(context),
                 ),
               ),
             ),
@@ -557,7 +591,8 @@ class TrailView extends GetView<TrailLogic> {
               style: AppTextStyles.body(
                 weight: FontWeight.w700,
                 size: 13.sp,
-                color: AppColors.primary,
+                context: context,
+                color: AppPalette.primary(context),
               ),
             ),
           ],
@@ -711,30 +746,30 @@ class _BadgeCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: unlocked
             ? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.cardBg,
-                  AppColors.peach.withValues(alpha: 0.5),
-                ],
-              )
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppPalette.surfaceElevated(context),
+            AppPalette.peach(context),
+          ],
+        )
             : null,
-        color: unlocked ? null : AppColors.rowAlt,
+        color: unlocked ? null : AppPalette.rowAlt(context),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
           color: unlocked
-              ? AppColors.primary.withValues(alpha: 0.35)
-              : AppColors.border,
+              ? AppPalette.primary(context).withValues(alpha: 0.35)
+              : AppPalette.border(context),
           width: unlocked ? 1.5 : 1,
         ),
         boxShadow: unlocked
             ? [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ]
+          BoxShadow(
+            color: AppPalette.cardShadow(context),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ]
             : null,
       ),
       child: Column(
@@ -746,16 +781,21 @@ class _BadgeCard extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: unlocked
                   ? LinearGradient(
-                      colors: [AppColors.primaryLight, AppColors.primary],
-                    )
+                colors: [
+                  AppPalette.primary(context),
+                  AppColors.primaryDark,
+                ],
+              )
                   : null,
-              color: unlocked ? null : AppColors.divider,
+              color: unlocked ? null : AppPalette.border(context),
               shape: BoxShape.circle,
             ),
             child: Icon(
               unlocked ? icon : Icons.lock_outline_rounded,
               size: 18.sp,
-              color: unlocked ? Colors.white : AppColors.textSecondary,
+              color: unlocked
+                  ? Colors.white
+                  : AppPalette.textSecondary(context),
             ),
           ),
           SizedBox(height: 10.h),
@@ -764,7 +804,10 @@ class _BadgeCard extends StatelessWidget {
             style: AppTextStyles.body(
               weight: FontWeight.w700,
               size: 13.sp,
-              color: unlocked ? AppColors.textPrimary : AppColors.textSecondary,
+              context: context,
+              color: unlocked
+                  ? AppPalette.textPrimary(context)
+                  : AppPalette.textSecondary(context),
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -773,7 +816,7 @@ class _BadgeCard extends StatelessWidget {
           Expanded(
             child: Text(
               badge.description,
-              style: AppTextStyles.caption(size: 10.sp),
+              style: AppTextStyles.caption(size: 10.sp, context: context),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

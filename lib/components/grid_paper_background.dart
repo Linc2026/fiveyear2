@@ -13,10 +13,11 @@ class GridPaperBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bg = backgroundColor ?? AppPalette.background(context);
     return Container(
-      color: backgroundColor ?? AppColors.background,
+      color: bg,
       child: CustomPaint(
-        painter: _GridPainter(),
+        painter: _GridPainter(lineColor: AppPalette.gridLine(context)),
         child: child,
       ),
     );
@@ -24,10 +25,14 @@ class GridPaperBackground extends StatelessWidget {
 }
 
 class _GridPainter extends CustomPainter {
+  final Color lineColor;
+
+  _GridPainter({required this.lineColor});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.gridLine.withValues(alpha: 0.5)
+      ..color = lineColor.withValues(alpha: 0.5)
       ..strokeWidth = 0.5;
     const step = 24.0;
     for (var x = 0.0; x < size.width; x += step) {

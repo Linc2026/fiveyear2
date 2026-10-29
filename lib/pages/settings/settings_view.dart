@@ -35,8 +35,11 @@ class SettingsView extends GetView<SettingsLogic> {
                             AppUi.fieldLabel(Lang.settingsNickname),
                             TextField(
                               controller: controller.nicknameController,
-                              style: AppTextStyles.body(),
+                              style: AppTextStyles.body(
+                                color: AppPalette.textPrimary(context),
+                              ),
                               decoration: AppUi.inputDecoration(
+                                context: context,
                                 hint: Lang.settingsNicknameHint,
                               ),
                             ),
@@ -50,7 +53,7 @@ class SettingsView extends GetView<SettingsLogic> {
                           children: [
                             AppUi.fieldLabel(Lang.settingsStartYear),
                             Obx(
-                              () => Row(
+                                  () => Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   AppCircleIconButton(
@@ -76,7 +79,7 @@ class SettingsView extends GetView<SettingsLogic> {
                       SizedBox(height: 12.h),
                       AppFormCard(
                         child: Obx(
-                          () => Row(
+                              () => Row(
                             children: [
                               Icon(Icons.dark_mode_outlined,
                                   size: 22.sp, color: AppColors.primary),
@@ -84,14 +87,17 @@ class SettingsView extends GetView<SettingsLogic> {
                               Expanded(
                                 child: Text(
                                   Lang.settingsDarkMode,
-                                  style: AppTextStyles.body(weight: FontWeight.w600),
+                                  style: AppTextStyles.body(
+                                    weight: FontWeight.w600,
+                                    color: AppPalette.textPrimary(context),
+                                  ),
                                 ),
                               ),
                               Switch.adaptive(
                                 value: controller.darkMode.value,
                                 activeTrackColor: AppColors.primary.withValues(alpha: 0.35),
                                 thumbColor: WidgetStatePropertyAll(AppColors.primary),
-                                onChanged: (v) => controller.darkMode.value = v,
+                                onChanged: controller.setDarkMode,
                               ),
                             ],
                           ),
@@ -99,7 +105,7 @@ class SettingsView extends GetView<SettingsLogic> {
                       ),
                       SizedBox(height: 24.h),
                       Obx(
-                        () => AppUi.primaryButton(
+                            () => AppUi.primaryButton(
                           label: Lang.editDone,
                           icon: Icons.save_outlined,
                           onPressed: controller.save,
